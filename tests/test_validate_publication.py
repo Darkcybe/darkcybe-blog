@@ -2,6 +2,7 @@
 
 from pathlib import Path
 import tempfile
+import subprocess
 import unittest
 
 from scripts.validate_publication import REQUIRED, validate
@@ -12,9 +13,15 @@ class PublicationValidationTests(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
+        self.git('init', '-q')
         for name in REQUIRED:
             self.write(name, "# Page\n")
         self.write("SUMMARY.md", "# Summary\n\n* [Home](README.md)\n")
+        self.git('add', '.')
+
+    def git(self, *args):
+        return subprocess.run(['git', '-C', str(self.root), *args], check=True,
+                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     def write(self, name, text):
         path = self.root / name
@@ -68,6 +75,68 @@ class PublicationValidationTests(unittest.TestCase):
         for content in ("# Summary\n", "* not a page\n"):
             self.write("SUMMARY.md", content)
             self.assertTrue(validate(self.root))
+
+    def test_unsafe_tracked_files(self):
+        for name in ('.env', '.env.local', 'config/production.env',
+                     'assets/server.key', 'assets/client.pfx', '.ssh/id_ed25519',
+                     'credentials.json', 'access-token.txt', 'secrets.yaml',
+                     'data.sqlite3', 'data.db-wal', 'capture.PCAPNG',
+                     'capture.pcap', 'events.evtx', 'raw.log', 'memory.dmp',
+                     'bundle.zip', 'bundle.7z', 'bundle.tar.gz'):
+            with self.subTest(name=name):
+                self.write(name, 'synthetic fixture\n')
+                self.git('add', '--', name)
+                self.assertTrue(any('unsafe public file' in e for e in validate(self.root)))
+                self.git('rm', '-f', '--', name)
+
+    def test_secret_markers_in_text_including_examples(self):
+        markers = ['-----BEGIN ' + kind + 'PRIVATE KEY-----'
+                   for kind in ('', 'RSA ', 'EC ', 'OPENSSH ', 'ENCRYPTED ')]
+        markers += ['gh' + 'p_' + 'A' * 36,
+                    'github_' + 'pat_' + 'A' * 82,
+                    'AK' + 'IA' + 'A' * 16,
+                    'xox' + 'b-' + '1' * 24]
+        for marker in markers:
+            with self.subTest(prefix=marker[:8]):
+                self.write('assets/example.txt', '<!--\n```\n' + marker + '\n```\n-->')
+                self.git('add', '.')
+                errors = validate(self.root)
+                self.assertTrue(any('secret marker' in e for e in errors))
+                self.assertNotIn(marker, '\n'.join(errors))
+
+    def test_utf16_secret_marker(self):
+        (self.root / 'example.txt').write_bytes(
+            ('-----BEGIN ' + 'PRIVATE KEY-----').encode('utf-16'))
+        self.git('add', '.')
+        self.assertTrue(any('secret marker' in e for e in validate(self.root)))
+
+    def test_scans_index_even_if_worktree_is_cleaned(self):
+        self.write('example.txt', 'gh' + 'p_' + 'A' * 36)
+        self.git('add', '.')
+        self.write('example.txt', 'sanitised worktree, unsafe index')
+        self.assertTrue(any('secret marker' in e for e in validate(self.root)))
+
+    def test_untracked_files_are_not_publication_inputs(self):
+        self.write('untracked.env', 'synthetic fixture')
+        self.assertEqual(validate(self.root), [])
+
+    def test_legitimate_security_prose_and_assets(self):
+        self.write('credential-analysis.md', '# Lab\n10.0.0.1, 172.16.0.1, 192.168.1.1\n'
+                   'SQLite, PCAP, EVTX, private keys, tokens and credentials.\n'
+                   'Use ghp_REDACTED as a placeholder.\n')
+        (self.root / 'diagram.png').write_bytes(b'\x89PNG\r\n\x1a\n')
+        self.git('add', '.')
+        self.assertEqual(validate(self.root), [])
+
+    def test_missing_git_index_fails_closed(self):
+        import shutil
+        shutil.rmtree(self.root / '.git')
+        self.assertTrue(any('cannot inspect Git index' in e for e in validate(self.root)))
+
+    def test_symlink_is_rejected_without_reading_target(self):
+        (self.root / 'outside.txt').symlink_to('/nonexistent-publication-fixture')
+        self.git('add', '.')
+        self.assertTrue(any('non-regular tracked file' in e for e in validate(self.root)))
 
 
 if __name__ == "__main__":

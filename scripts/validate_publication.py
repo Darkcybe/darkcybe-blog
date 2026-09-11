@@ -1,4 +1,4 @@
-"""Offline structural checks for this small GitBook repository (stdlib only).
+"""Offline structure and tracked-index safety checks (stdlib only; requires Git).
 
 Checks inline Markdown links/images and HTML href/src links outside code/comments.
 Reference-style links and GitBook-generated heading anchors need render review;
@@ -9,6 +9,7 @@ from html import unescape
 from html.parser import HTMLParser
 from pathlib import Path
 import re
+import subprocess
 import sys
 from urllib.parse import unquote, urlsplit
 
@@ -22,6 +23,63 @@ REQUIRED = (
     "templates/investigation-report.md", "templates/field-note.md",
 )
 LINK = re.compile(r'!?\[[^\]\n]*\]\((<[^>\n]*>|[^()\n]*(?:\([^()\n]*\)[^()\n]*)*)\)')
+
+# No archive exceptions until a public asset workflow is explicitly reviewed.
+UNSAFE_SUFFIXES = {
+    '.key', '.pem', '.p12', '.pfx', '.jks', '.keystore',
+    '.db', '.sqlite', '.sqlite3', '.db3', '.sql',
+    '.db-wal', '.db-shm', '.sqlite-wal', '.sqlite-shm',
+    '.pcap', '.pcapng', '.cap', '.evtx', '.log', '.dmp', '.dump', '.core',
+    '.zip', '.7z', '.tar', '.tgz', '.gz', '.bz2', '.xz', '.rar',
+}
+UNSAFE_NAME = re.compile(
+    r'(^|[._-])(env|credentials?|tokens?|secrets?)([._-]|$)'
+)
+SECRET_MARKERS = (
+    re.compile(r'-----BEGIN (?:[A-Z0-9]+ )*PRIVATE KEY-----'),
+    re.compile(r'\bgh[pousr]_[A-Za-z0-9]{36}\b'),
+    re.compile(r'\bgithub_pat_[A-Za-z0-9_]{82}\b'),
+    re.compile(r'\b(?:AKIA|ASIA)[A-Z0-9]{16}\b'),
+    re.compile(r'\bxox[baprs]-[A-Za-z0-9-]{20,}\b'),
+)
+
+
+def publication_safety(root):
+    """Scan the tracked index snapshot, never print matched secret values."""
+    errors = []
+    try:
+        entries = subprocess.run(
+            ['git', '-C', str(root), 'ls-files', '--stage', '-z'],
+            check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+        ).stdout
+        for entry in entries.split(b'\0'):
+            if not entry:
+                continue
+            metadata, raw_name = entry.split(b'\t', 1)
+            mode, oid, stage = metadata.decode('ascii').split()
+            name = raw_name.decode('utf-8', errors='replace')
+            path = Path(name.lower())
+            if stage != '0' or mode not in ('100644', '100755'):
+                errors.append(f'{name!r}: unresolved or non-regular tracked file')
+                continue
+            if (set(path.suffixes) & UNSAFE_SUFFIXES
+                    or any(part == '.env' or part.startswith('.env.') for part in path.parts)
+                    or any(part in ('.ssh', '.aws') for part in path.parts)
+                    or path.name in ('id_rsa', 'id_dsa', 'id_ecdsa', 'id_ed25519', '.netrc', '.npmrc', '.pypirc')
+                    or (UNSAFE_NAME.search(path.name) and path.suffix not in ('.md', '.py'))):
+                errors.append(f'{name!r}: unsafe public file type or credential filename')
+            blob = subprocess.run(
+                ['git', '-C', str(root), 'cat-file', 'blob', oid],
+                check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            ).stdout
+            # UTF-16 text is common in Windows evidence; inspect it too.
+            encoding = 'utf-16' if blob.startswith((b'\xff\xfe', b'\xfe\xff')) else 'utf-8'
+            text = blob.decode(encoding, errors='replace')
+            if any(marker.search(text) for marker in SECRET_MARKERS):
+                errors.append(f'{name!r}: high-confidence secret marker (value withheld)')
+    except (OSError, subprocess.CalledProcessError):
+        errors.append('publication safety: cannot inspect Git index; validation failed')
+    return errors
 
 
 def prose(text):
@@ -77,13 +135,13 @@ def local_target(root, page, target):
 
 def validate(root):
     root = root.resolve()
-    errors = []
+    errors = publication_safety(root)
     for name in REQUIRED:
         if not (root / name).is_file():
             errors.append(f"missing foundational file: {name}")
     seen = set()
     for page in sorted(root.rglob("*.md")):
-        if ".git" in page.relative_to(root).parts:
+        if ".git" in page.relative_to(root).parts or page.is_symlink():
             continue
         content = prose(page.read_text(encoding="utf-8"))
         links = []
@@ -126,4 +184,4 @@ if __name__ == "__main__":
         print(problem, file=sys.stderr)
     if problems:
         sys.exit(1)
-    print("Publication structure: PASS (offline; rendering and technical claims not checked)")
+    print("Publication structure and safety: PASS (offline; index scanned; review still required)")
