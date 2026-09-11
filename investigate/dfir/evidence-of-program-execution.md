@@ -36,6 +36,12 @@ This guide uses “directly observed process creation” to mean a retained even
 | Evidence consistent with execution | An execution-related cache contains a relevant record | “The record supports execution under these documented conditions.” |
 | Directly observed process creation | A retained process-creation event identifies an image | “The provider recorded creation of this process.” |
 
+{% hint style="info" %}
+**K-2AI NOTE**
+
+A parser column is not a verdict, however confidently it is capitalised. Before writing “executed”, name the action that creates the record and one alternative explanation you still need to rule out.
+{% endhint %}
+
 ## Applicability and evidence boundary
 
 This is a source-reviewed interpretation guide, **not a lab report**. No fresh Windows reproduction or Darkcybe field experiment is claimed. Windows 10/11 are the main endpoint context; server systems, older releases, application types and individual builds require separate checks. An artifact's existence on a platform does not guarantee identical fields or behaviour across its versions.
@@ -67,6 +73,12 @@ Use this map to choose the next source to inspect. Read the qualifications in th
 
 **What this establishes:** the provider reported a creation event for the recorded process. **What it does not establish:** that every instruction or script named in its arguments ran, that an operation succeeded, or that the account holder personally initiated it. Follow the process into relevant application, output and network evidence before claiming an outcome.
 
+{% hint style="info" %}
+**DEATH STAR LAB CAPTURE — process creation**
+
+Future capture, not evidence supplied here: show a benign application's process-creation event alongside its raw XML. Annotate the image path, timestamp and account fields; record the Windows build and logging configuration. This would help readers separate recorded creation from an assumed successful outcome. Use an authorised lab and sanitise host/account details before sharing.
+{% endhint %}
+
 ## Prefetch: execution-related evidence with a specific subject
 
 **Location:** `%SystemRoot%\Prefetch\*.pf`.
@@ -76,6 +88,12 @@ Prefetch is produced to support application launch performance. A relevant recor
 The program associated with the Prefetch record is different from files it referenced during launch. A referenced DLL, document or second executable is not thereby proven to have executed. Do not derive an exact first-run time by subtracting a fixed delay from the `.pf` filesystem creation time. Check whether application prefetching was active; server defaults differ from desktop defaults. [Microsoft IR guidebook, Prefetch](https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/microsoft/final/en-us/microsoft-brand/documents/IR-Guidebook-Final.pdf#page=6).
 
 Prefetch alone does not identify a human operator or prove successful completion. A missing record should prompt a coverage question, not a finding that the program never ran.
+
+{% hint style="info" %}
+**DEATH STAR LAB CAPTURE — Prefetch subject versus references**
+
+Future capture, not an existing screenshot: annotate a parsed Prefetch record from an authorised benign lab run, distinguishing the subject executable and embedded run times from its referenced-file list. Record the Windows build and parser version. The visual should make clear which program the record describes; a referenced file does not inherit an execution verdict. Sanitise paths before sharing.
+{% endhint %}
 
 ## Amcache: establish inventory before inferring execution
 
@@ -129,6 +147,20 @@ Resource use can corroborate application activity. A network-byte total alone do
 
 ## Interpretation workflow
 
+Use the decision point below when a promising artifact tempts you to write a stronger conclusion. The numbered steps explain the checks behind it.
+
+```mermaid
+flowchart TD
+    A["Define the claim and time window"] --> B["Check coverage and file identity"]
+    B --> C["Identify how the record was created"]
+    C --> D{"Does the evidence support this claim?"}
+    D -->|Yes| E["Seek independent corroboration"]
+    D -->|No or unclear| F["Report the reference and the unresolved question"]
+    E --> G["Check alternative explanations"]
+    G --> H["Write a bounded conclusion and its limits"]
+    F --> H
+```
+
 1. **State the claim first.** Name the proposed executable, host and time window. Keep “present”, “ran”, “ran as this account” and “performed this action” as separate questions.
 2. **Record coverage.** Identify OS build, relevant configuration, collection time, timezone assumptions, available logs and missing profiles. Work from preserved evidence; do not launch the suspect program or change settings to manufacture a missing trace.
 3. **Resolve identity.** Compare full paths, volume context and available hashes. A filename match is a lead. Explain mismatches rather than quietly joining records by basename.
@@ -151,6 +183,12 @@ The following are **hypothetical analytical patterns**, not Darkcybe case result
 | SRUM activity + process-linked network telemetry | Is resource use consistent with the investigated process and interval? | Payload and intent need separate evidence |
 
 Two tools parsing the same source are a useful parser cross-check, but not two independent observations. Likewise, several artifacts may share one underlying mechanism. Evaluate independence rather than counting hits.
+
+{% hint style="info" %}
+**K-2AI ASSESSMENT**
+
+Two parsers reading one cache are not two witnesses. Before adding confidence, identify the independent recording mechanism behind each hit. If both lead back to the same bytes, keep the parser cross-check and look elsewhere for corroboration. The evidence does not get a promotion for appearing twice.
+{% endhint %}
 
 ## Limitations and analyst takeaways
 
