@@ -2,13 +2,15 @@
 description: "Practical incident response, DFIR, detection engineering and security experiments by Darkcybe."
 ---
 
-# DARKCYBE // HOLONET TERMINAL
+# HOLOCRON // PUBLIC SECURITY ARCHIVE
 
-`IMPERIAL SECURITY ARCHIVE`
+`HOLONET KNOWLEDGE NODE`
+
+Practical cybersecurity knowledge by Darkcybe.
 
 Understand what happened. Find the evidence. Build something you can trust.
 
-Darkcybe is a working knowledge archive for incident response, digital forensics, detection engineering and threat investigation — with security engineering and laboratory experiments behind the methods. The useful part is the reasoning: what an artifact supports, what a detection misses, and where an experiment stops proving anything.
+Holocron is a bounded public knowledge repository for incident response, digital forensics, detection engineering and threat investigation — with security engineering and laboratory experiments behind the methods. The useful part is the reasoning: what an artifact supports, what a detection misses, and where an experiment stops proving anything.
 
 ## Select your route
 
@@ -31,8 +33,6 @@ Darkcybe is a working knowledge archive for incident response, digital forensics
 
 A reproduced result, a source-backed explanation and a field observation carry different weight. Technical articles state their validation basis, relevant versions and last verification date. An attractive terminal does not make a claim true.
 
-{% hint style="info" %}
-**K-2AI // HOLONET EDITORIAL SYSTEM**
-
-Research and editorial assistance. Darkcybe remains the author and decides what enters the archive. [About the publication](about/README.md).
-{% endhint %}
+> **K-2AI // HOLONET EDITORIAL SYSTEM**
+>
+> Research and editorial assistance. Darkcybe remains the author and decides what enters Holocron. [About the publication](about/README.md).

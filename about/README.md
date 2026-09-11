@@ -6,13 +6,15 @@ description: "Darkcybe's authorship, the Holonet identity and K-2AI's editorial 
 
 `AUTHOR // DARKCYBE`
 
-Darkcybe is the author and publisher of this archive. Its focus is practical cybersecurity: incident response, digital forensics, detection, investigation and the engineering that supports them.
+Darkcybe is the author and publisher of Holocron. Its focus is practical cybersecurity: incident response, digital forensics, detection, investigation and the engineering that supports them.
 
-Darkcybe 3.0 is a fresh edition. Earlier material is a source to revisit selectively, with its usefulness and technical currency assessed before it returns. The archive is organised around the work a reader needs to do.
+Holocron is a fresh publication. Earlier material is a source to revisit selectively, with its usefulness and technical currency assessed before it returns. The archive is organised around the work a reader needs to do.
 
 ## The operations centre
 
-The Death Star / Holonet terminal is the visual setting: spare panels, technical labels and a little Imperial restraint. The content remains plain-spoken. A reader should never need to understand the fiction to understand the method.
+Darkcybe is the author and operator identity. Holonet is the information and automation plane. Death Star is the laboratory and experimental environment. Holocron is the bounded public knowledge repository and publication.
+
+The terminal visual language uses spare panels, technical labels and a little Imperial restraint. The content remains plain-spoken. A reader should never need to understand the fiction to understand the method.
 
 ## K-2AI // HOLONET EDITORIAL SYSTEM
 

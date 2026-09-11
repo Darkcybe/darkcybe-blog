@@ -1,8 +1,9 @@
 # Publication contract
 
-- Darkcybe is the author and publisher. K-2AI is the editorial/research assistant, identified as `K-2AI // HOLONET EDITORIAL SYSTEM` when useful.
+- Holocron is the bounded public knowledge repository/publication; Holonet is the information and automation plane; Death Star is the laboratory/experimental environment. Darkcybe is the author/operator and publisher. K-2AI is the editorial/research assistant, identified as `K-2AI // HOLONET EDITORIAL SYSTEM` when useful.
 - AI output is never autonomously published. Work on `codex/*` branches; Darkcybe's PR review is the publication boundary. Do not merge or publish without explicit authority.
-- Never expose private Obsidian material, customer/case information, credentials, Holonet secrets or private runtime information. Only deliberately selected, sanitised public material belongs here.
+- Anything committed to this repository is assumed public. Private Obsidian content, customer/case data, HOLONET secrets/runtime material, credentials and unsanitised evidence must never be staged here. Only deliberately selected, sanitised public material belongs here.
+- The publication-safety gate checks tracked Git index files for obvious unsafe filenames and high-confidence secret markers, including code examples and comments. Stage intended public changes before validating. No archive-bundle exception is approved: a future public asset workflow needs explicit review before adding one. CI may prevent obvious mistakes; it does not replace Darkcybe’s PR review or provide generic DLP.
 - Never fabricate testing, field experience, citations or certainty. Distinguish observation, source claims, inference and unknowns; source current technical claims.
 - Follow [the design system](docs/DESIGN-SYSTEM.md). Templates are authoring references, not mandatory section checklists or published pages.
 - Before GitBook-specific edits, read the current [official writing skill](https://github.com/GitbookIO/gitbook-skills/blob/main/skills/write-docs/SKILL.md) and relevant references. Preserve useful GitBook-native Markdown. Do not invent CSS/JS styling or a frontend.

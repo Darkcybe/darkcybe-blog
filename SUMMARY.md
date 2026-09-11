@@ -1,6 +1,6 @@
 # Table of contents
 
-* [Darkcybe](README.md)
+* [Holocron](README.md)
 * [Start Here](start-here/README.md)
 
 ## INVESTIGATE
