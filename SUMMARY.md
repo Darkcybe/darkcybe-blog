@@ -6,6 +6,7 @@
 ## INVESTIGATE
 
 * [Incident Response & DFIR](investigate/README.md)
+  * [Evidence of Program Execution](investigate/dfir/evidence-of-program-execution.md)
 
 ## DETECT
 
