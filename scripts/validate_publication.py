@@ -15,7 +15,7 @@ from urllib.parse import unquote, urlsplit
 
 
 REQUIRED = (
-    "README.md", "SUMMARY.md", "AGENTS.md", ".gitbook.yaml",
+    "README.md", "SUMMARY.md", "AGENTS.md", ".gitbook.yaml", "gitbook-docs.yaml",
     "start-here/README.md", "investigate/README.md", "detect/README.md",
     "build/README.md", "reference/README.md", "dispatches/README.md",
     "about/README.md", "docs/DESIGN-SYSTEM.md",

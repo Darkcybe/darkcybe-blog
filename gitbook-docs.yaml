@@ -1,0 +1,11 @@
+$schema: https://api.gitbook.com/gitbook-docs.yaml
+site:
+  title: Holocron
+  structure:
+    - type: space
+      key: holocron
+      title: Holocron
+      path: holocron
+      default: true
+      content:
+        directory: ./
