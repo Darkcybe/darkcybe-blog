@@ -11,7 +11,7 @@ What evidence supports that a program executed, and what does each artifact actu
 | AUTHOR | DARKCYBE |
 | EDITORIAL / RESEARCH ASSISTANCE | K-2AI // HOLONET |
 | VALIDATION | SOURCE VALIDATED |
-| PUBLISHED | Pending |
+| PUBLISHED | 2026-09-11 |
 | LAST VERIFIED | 2026-09-11 — public-source review |
 | SCOPE | Windows endpoint investigations; version and configuration limits below |
 
