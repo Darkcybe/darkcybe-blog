@@ -22,6 +22,10 @@ K-2AI assists with research, structure, drafting and technical review. Occasiona
 
 Assistance is not evidence of testing. Claims about lab work, field experience or reproduced results must be supported by the corresponding evidence and attributed accurately.
 
+## Publication model
+
+Holocron is maintained from reviewed GitHub source. Darkcybe reviews changes before publication.
+
 ## Corrections and uncertainty
 
 Technical articles should identify their sources, validation basis and last verification date. Corrections that change the meaning of a result should be visible to the reader. Missing evidence remains a limitation rather than an invitation to fill the gap with confidence.
