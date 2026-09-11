@@ -46,6 +46,11 @@ class PublicationValidationTests(unittest.TestCase):
         (self.root / "AGENTS.md").unlink()
         self.assertTrue(any("missing foundational" in e for e in validate(self.root)))
 
+    def test_missing_site_sync_configuration(self):
+        (self.root / "gitbook-docs.yaml").unlink()
+        self.assertIn("missing foundational file: gitbook-docs.yaml",
+                      validate(self.root))
+
     def test_missing_navigation(self):
         self.write("SUMMARY.md", "* [Missing](missing.md)\n")
         self.assertTrue(any("does not exist" in e for e in validate(self.root)))
