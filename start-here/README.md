@@ -16,6 +16,12 @@ Start with the question you need to answer. The archive is arranged around inves
 | What does this field, artifact or command mean? | [Reference](../reference/README.md) | A concise answer with applicability and caveats |
 | What is worth examining next? | [Dispatches](../dispatches/README.md) | A focused observation, tool assessment or research question |
 
+## A first read
+
+Start with [Evidence of Program Execution](../investigate/dfir/evidence-of-program-execution.md). It asks what supports the claim that a Windows program ran, then separates file presence, artifact references, evidence consistent with execution and directly recorded process creation.
+
+Its **SOURCE VALIDATED** label means the interpretations were checked against cited sources within the stated version and configuration limits. It does not mean every artifact was reproduced in a fresh lab. Use the corroboration workflow, then check what telemetry your own environment actually collected.
+
 ## Read the evidence label
 
 **LAB VALIDATED** means the described procedure or result was reproduced in an authorised lab. Read the environment and evidence to see exactly what was tested; the label does not extend to other versions or deployments.
@@ -25,6 +31,10 @@ Start with the question you need to answer. The archive is arranged around inves
 **FIELD NOTE** identifies observation, analysis or opinion. It should tell you whose observation it is, its context and what remains uncertain.
 
 Published dates describe release history. Last verified dates describe the most recent technical check within the stated scope. Neither guarantees that a method fits your environment today.
+
+## Notes in the margin
+
+**K-2AI** callouts highlight an interpretation trap or a practical check; they are editorial assistance, not additional evidence. **DEATH STAR LAB CAPTURE** prompts identify a future screenshot that would help explain the method. A prompt is not a completed experiment or an existing image.
 
 ## Carry the reasoning with the result
 
